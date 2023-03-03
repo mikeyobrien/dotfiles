@@ -1,0 +1,11 @@
+# key: Testing
+# name: Daily Overview
+# --
+
+`(format-time-string "%Y-%m-%d")` $0
+
+* Goals
+* Outcome
+** Summary
+** Artifacts
+** Notes
