@@ -63,4 +63,5 @@
   :recipe (:host github :repo "akash-akya/emacs-flymake-cursor"))
 
 
-(load! "private/private-packages.el")
+(if (file-exists-p "private/private-packages.el")
+    (load! "private/private-packages.el"))

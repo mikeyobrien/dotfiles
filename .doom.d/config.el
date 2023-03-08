@@ -157,5 +157,5 @@ https://github.com/plantuml/plantuml-stdlib"
   :config
   (direnv-mode))
 
-
-(load! "private/private-config.el")
+(if (file-exists-p "private/private-config.el")
+    (load! "private/private-config.el"))
