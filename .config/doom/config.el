@@ -2,8 +2,8 @@
 
 (setq user-full-name "Mikey O'Brien"
       user-mail-address "hughobrien.v@gmail.com")
-(setq doom-font (font-spec :family "JetBrains Mono" :size 14)
-      doom-serif-font (font-spec :family "JetBrains Mono"))
+(setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 14)
+      doom-serif-font (font-spec :family "JetBrainsMono Nerd Font"))
 
 (use-package-hook! evil
   :pre-init
