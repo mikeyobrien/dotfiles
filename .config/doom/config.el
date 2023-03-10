@@ -2,8 +2,8 @@
 
 (setq user-full-name "Mikey O'Brien"
       user-mail-address "hughobrien.v@gmail.com")
-(setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 14)
-      doom-serif-font (font-spec :family "JetBrainsMono Nerd Font"))
+(setq doom-font (font-spec :family "FiraCode Nerd Font" :size 14)
+      doom-serif-font (font-spec :family "FiraCode Nerd Font"))
 
 (use-package-hook! evil
   :pre-init
@@ -11,7 +11,7 @@
   t)
 
 ;; Set theme and remove the defaults
-(setq doom-theme 'doom-vibrant)
+(setq doom-theme 'doom-one)
 (remove-hook 'window-setup-hook #'doom-init-theme-h)
 (add-hook 'after-init-hook #'doom-init-theme-h 'append)
 (delq! t custom-theme-load-path)
@@ -156,6 +156,11 @@ https://github.com/plantuml/plantuml-stdlib"
 (use-package! direnv
   :config
   (direnv-mode))
+
+(use-package! tramp
+  :config
+  (add-to-list 'tramp-remote-path "/etc/profiles/per-user/mobrien/bin")
+  (add-to-list 'tramp-remote-path "/run/current-system/sw/bin"))
 
 (if (file-exists-p "private/private-config.el")
     (load! "private/private-config.el"))
