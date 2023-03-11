@@ -46,7 +46,7 @@ https://github.com/plantuml/plantuml-stdlib"
   (setq org-src-window-setup 'current-window)
   (add-hook! 'org-mode-hook 'turn-on-visual-line-mode)
   (setq org-capture-templates
-        '(("t" "todo" entry (file+headline "todo.org" "Unsorted")
+        '(("i" "inbox" entry (file+headline "inbox.org" "Unsorted")
            "* TODO %?\n\%i\n%a"
            :prepend t)
           ("d" "deadline" entry (file+headline "todo.org" "Schedule")
