@@ -56,6 +56,7 @@
 (package! company-native-complete)
 (package! tree-sitter-langs)
 (package! fennel-mode)
+(package! feature-mode)
 (package! d2-mode)
 (package! flymake-vale :recipe
   (:type git :host github :repo "tpeacock19/flymake-vale"))

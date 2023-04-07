@@ -5,6 +5,7 @@
 (setq doom-font (font-spec :family "FiraCode Nerd Font" :size 14)
       doom-serif-font (font-spec :family "FiraCode Nerd Font"))
 
+
 (use-package-hook! evil
   :pre-init
   (setq evil-respect-visual-line-mode t) ;; sane j and k behavior
@@ -164,3 +165,17 @@ https://github.com/plantuml/plantuml-stdlib"
 
 (if (file-exists-p "private/private-config.el")
     (load! "private/private-config.el"))
+
+(defun c1-layout ()
+  (interactive)
+  (delete-other-windows)
+  (let ((bottom-half (split-window-below (floor (* 0.3 (window-height)))))
+        (vterm-buffer (get-buffer "*vterm*")))
+    (if vterm-buffer
+        (switch-to-buffer vterm-buffer)
+      (+vterm/here 0))
+    (select-window bottom-half)
+    (split-window-right (floor (* 0.3 (window-width))))
+    (org-agenda-list)
+    (windmove-right)
+    (switch-to-buffer (get-buffer "*doom*"))))
