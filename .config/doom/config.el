@@ -1,5 +1,9 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
+(add-load-path! "private")
+(when (file-exists-p "private/private-config.el")
+  (require 'private-config))
+
 (setq user-full-name "Mikey O'Brien"
       user-mail-address "hughobrien.v@gmail.com")
 (setq doom-font (font-spec :family "FiraCode Nerd Font" :size 14)
@@ -21,6 +25,10 @@
 
 (setq-default major-mode 'org-mode)
 
+;; use excorporate to sync outlook calendar
+(setq diary-file "~/org/diary")
+(setq excorporate-diary-today-file diary-file)
+
 (with-eval-after-load 'lsp-mode
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\build\\'"))
 
@@ -34,6 +42,9 @@
       org-agenda-files (directory-files org-directory t "\\.org$"))
 
 (after! org
+  (add-to-list 'org-agenda-files '"~/org/roam/daily/" '"~/org/roam")
+  (setq org-agenda-include-diary t)
+  (setq org-ellipsis " [...] ")
   (setq org-src-window-setup 'current-window)
   (add-hook! 'org-mode-hook 'turn-on-visual-line-mode)
   (setq org-capture-templates
@@ -206,10 +217,6 @@
                          (magit-revert "--autostash")))
 
 
-
-(if (file-exists-p "private/private-config.el")
-    (load! "private/private-config.el"))
-
 (defun c1-layout ()
   (interactive)
   (delete-other-windows)
@@ -218,7 +225,7 @@
     (if vterm-buffer
         (switch-to-buffer vterm-buffer)
       (+vterm/here 0))
-    (select-window bottom-half)
+
     (split-window-right (floor (* 0.3 (window-width))))
     (org-agenda-list)
     (windmove-right)
