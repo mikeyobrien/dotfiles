@@ -3,7 +3,7 @@
 (setq user-full-name "Mikey O'Brien"
       user-mail-address "hughobrien.v@gmail.com")
 (setq doom-font (font-spec :family "FiraCode Nerd Font" :size 14)
-      doom-serif-font (font-spec :family "FiraCode Nerd Font"))
+      doom-serif-font (font-spec :family "Roboto"))
 
 
 (use-package-hook! evil
@@ -11,54 +11,75 @@
   (setq evil-respect-visual-line-mode t) ;; sane j and k behavior
   t)
 
+(setq doom-scratch-initial-major-mode 'lisp-interaction-mode)
+
 ;; Set theme and remove the defaults
 (setq doom-theme 'doom-one)
 (remove-hook 'window-setup-hook #'doom-init-theme-h)
 (add-hook 'after-init-hook #'doom-init-theme-h 'append)
 (delq! t custom-theme-load-path)
 
-(setq org-directory "~/org/")
 (setq-default major-mode 'org-mode)
 
 (with-eval-after-load 'lsp-mode
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\build\\'"))
 
-(defun plantuml-find-icon ()
-  "Find and insert !include statement for AWS resource.
-Download this and modify basedir appropriately
-https://github.com/plantuml/plantuml-stdlib"
-  (interactive)
-  (let ((basedir (expand-file-name "~/git/plantuml-stdlib/awslib")))
-    (helm :sources
-          (helm-build-sync-source "AWS Architecture"
-                                  :candidates (directory-files-recursively basedir "")
-                                  :fuzzy-match t
-                                  :action (lambda (candidate)  (insert (format "!include <awslib%s>" (nth 1 (split-string candidate basedir)))))
-                                  ))))
-
-(setq plantuml-jar-path "/opt/homebrew/Cellar/plantuml/1.2022.4/libexec/plantuml.jar") ;; The homebrew install location
-(setq plantuml-default-exec-mode 'jar)
 (setq read-process-output-max (* 1024 1024)) ;; 1 mb
 
+(setq +org-roam-auto-backlinks-buffer t
+      org-ellipsis " [...] "
+      org-directory "~/org/"
+      org-roam-db-location (concat org-directory ".org-roam.db")
+      org-archive-location (concat org-directory ".archive/%s::")
+      org-agenda-files (directory-files org-directory t "\\.org$"))
+
 (after! org
-  (add-to-list 'org-agenda-files '"~/org/roam/daily/" '"~/org/roam")
-  (setq org-ellipsis " [...] ")
-  (setq org-plantuml-jar-path (expand-file-name  "/opt/homebrew/Cellar/plantuml/1.2022.4/libexec/plantuml.jar"))
   (setq org-src-window-setup 'current-window)
   (add-hook! 'org-mode-hook 'turn-on-visual-line-mode)
   (setq org-capture-templates
         '(("i" "inbox" entry (file+headline "inbox.org" "Unsorted")
            "* TODO %?\n\%i\n%a"
            :prepend t)
-          ("d" "deadline" entry (file+headline "todo.org" "Schedule")
+          ("d" "deadline" entry (file+headline "inbox.org" "Schedule")
            "* TODO %?\nDEADLINE: <%(org-read-date)>\n\n%i\n%a"
            :prepend t)
-          ("s" "schedule" entry (file+headline "todo.org" "Schedule")
+          ("s" "schedule" entry (file+headline "inbox.org" "Schedule")
            "* TODO %?\nSCHEDULED: <%(org-read-date)>\n\n%i\n%a"
            :prepend t)))
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((plantuml . t))))
+
+(after! org-roam
+  (setq org-roam-capture-templates
+        `(("n" "note" plain
+           ,(format "#+title: ${title}\n%%[%s/template/note.org]" org-roam-directory)
+           :target (file "note/%<%Y%m%d%H%M%S>-${slug}.org")
+           :unnarrowed t)
+          ("p" "project" plain
+           ,(format "#+title: ${title}\n%%[%s/template/project.org]" org-roam-directory)
+           :target (file "project/%<%Y%m%d>-${slug}.org")
+           :unnarrowed t)
+          ("s" "secret" plain "#+title: ${title}\n\n"
+           :target (file "secret/%<%Y%m%d%H%M%S>-${slug}.org.gpg")
+           :unnarrowed t))
+        ;; Use human readable dates for dailies titles
+        org-roam-dailies-capture-templates
+        '(("d" "default" entry "* %?"
+           :target (file+head "%<%Y-%m-%d>.org" "#+title: %<%B %d, %Y>\n\n"))))
+
+  ;; Make the backlinks buffer easier to peruse by folding leaves by default.
+  (add-hook 'org-roam-buffer-postrender-functions #'magit-section-show-level-2)
+
+  ;; List dailies and zettels separately in the backlinks buffer.
+  (advice-add #'org-roam-backlinks-section :override #'org-roam-grouped-backlinks-section)
+
+  ;; Open in focused buffer, despite popups
+  (advice-add #'org-roam-node-visit :around #'+popup-save-a)
+
+  ;; Add ID, Type, Tags, and Aliases to top of backlinks buffer.
+  (advice-add #'org-roam-buffer-set-header-line-format :after #'org-roam-add-preamble-a))
+
 
 
 (setq display-line-numbers-type t)
@@ -90,16 +111,20 @@ https://github.com/plantuml/plantuml-stdlib"
            (markdown-mode   . flymake-vale-load)
            (message-mode    . flymake-vale-load))
     :config
-        (add-hook! 'find-file-hook 'flymake-vale-maybe-load)
-        (add-hook! 'org-mode-hook 'flymake-mode)
-        (add-to-list 'flymake-vale-modes 'org-mode)))
-  ;; )
+    (add-hook! 'find-file-hook 'flymake-vale-maybe-load)
+    (add-hook! 'org-mode-hook 'flymake-mode)
+    (add-to-list 'flymake-vale-modes 'org-mode)))
+;; )
 
 (use-package! tree-sitter
   :config
   (require 'tree-sitter-langs)
   (global-tree-sitter-mode)
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
+(defun connect-desktop ()
+  (interactive)
+  (find-file "/ssh:desktop:~"))
 
 (defun smerge-repeatedly ()
   "Perform smerge actions again and again"
@@ -161,7 +186,26 @@ https://github.com/plantuml/plantuml-stdlib"
 (use-package! tramp
   :config
   (add-to-list 'tramp-remote-path "/etc/profiles/per-user/mobrien/bin")
+  (add-to-list 'tramp-remote-path "/etc/profiles/per-user/mobrienv/bin")
   (add-to-list 'tramp-remote-path "/run/current-system/sw/bin"))
+
+(after! lsp-mode
+  (lsp-register-client
+    (make-lsp-client :new-connection (lsp-tramp-connection "pyright-langserver")
+                     :major-modes '(python-mode)
+                     :remote? t
+                     :server-id 'pyright-remote)))
+
+;;; :tools magit
+(setq magit-repository-directories '(("~/Code" . 2))
+      magit-save-repository-buffers nil
+      ;; Don't restore the wconf after quitting magit, it's jarring
+      magit-inhibit-save-previous-winconf t
+      transient-values '((magit-rebase "--autosquash" "--autostash")
+                         (magit-pull "--rebase" "--autostash")
+                         (magit-revert "--autostash")))
+
+
 
 (if (file-exists-p "private/private-config.el")
     (load! "private/private-config.el"))
