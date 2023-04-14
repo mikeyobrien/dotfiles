@@ -198,7 +198,15 @@
   :config
   (add-to-list 'tramp-remote-path "/etc/profiles/per-user/mobrien/bin")
   (add-to-list 'tramp-remote-path "/etc/profiles/per-user/mobrienv/bin")
-  (add-to-list 'tramp-remote-path "/run/current-system/sw/bin"))
+  (add-to-list 'tramp-remote-path "/run/current-system/sw/bin")
+  (add-to-list 'tramp-methods
+        '("yadm"
+        (tramp-login-program "yadm")
+        (tramp-login-args (("enter")))
+        (tramp-login-env (("SHELL") ("/bin/sh")))
+        (tramp-remote-shell "/bin/sh")
+        (tramp-remote-shell-args ("-c")))))
+
 
 (after! lsp-mode
   (lsp-register-client
@@ -230,3 +238,7 @@
     (org-agenda-list)
     (windmove-right)
     (switch-to-buffer (get-buffer "*doom*"))))
+
+(defun yadm-status ()
+  (interactive)
+  (magit-status "/yadm::"))
