@@ -51,7 +51,10 @@
         '(("i" "inbox" entry (file+headline "inbox.org" "Unsorted")
            "* TODO %?\n\%i\n%a"
            :prepend t)
-          ("d" "deadline" entry (file+headline "inbox.org" "Schedule")
+          ("T" "today" entry (file+headline "~/org/tasks.org" "Tasks")
+                "* TODO %?\n  SCHEDULED: %t"
+                :prepend t)
+          ("d" "deadline" entry (file+headline "todo.org" "Schedule")
            "* TODO %?\nDEADLINE: <%(org-read-date)>\n\n%i\n%a"
            :prepend t)
           ("s" "schedule" entry (file+headline "inbox.org" "Schedule")
@@ -241,4 +244,27 @@
 
 (defun yadm-status ()
   (interactive)
-  (magit-status "/yadm::"))
+  (magit-status "/yadm::")
+  (add-to-list 'tramp-remote-path "/run/current-system/sw/bin"))
+
+(setq mu4e-maildir "~/.mail"
+      mu4e-attachment-dir "~/Downloads")
+
+(setq user-mail-address "me@mikeyobrien.com"
+      user-full-name  "Mikey O'Brien")
+
+;; Get mail
+(setq mu4e-get-mail-command "mbsync protonmail"
+      mu4e-change-filenames-when-moving t   ; needed for mbsync
+      mu4e-update-interval 120)             ; update every 2 minutes
+
+;; Send mail
+(setq message-send-mail-function 'smtpmail-send-it
+      smtpmail-auth-credentials "pass bridge-key"
+      smtpmail-smtp-server "127.0.0.1"
+      smtpmail-stream-type 'starttls
+      smtpmail-smtp-service 1025)
+
+
+(if (file-exists-p "private/private-config.el")
+    (load! "private/private-config.el"))
