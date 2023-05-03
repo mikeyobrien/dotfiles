@@ -7,8 +7,10 @@
 (setq user-full-name "Mikey O'Brien"
       user-mail-address "hughobrien.v@gmail.com")
 (setq doom-font (font-spec :family "FiraCode Nerd Font" :size 14)
-      doom-serif-font (font-spec :family "Roboto"))
+      doom-serif-font (font-spec :family "FiraCode Nerd Font"))
 
+
+(auto-save-visited-mode +1)
 
 (use-package-hook! evil
   :pre-init
@@ -41,8 +43,11 @@
       org-archive-location (concat org-directory ".archive/%s::")
       org-agenda-files (directory-files org-directory t "\\.org$"))
 
+
+(use-package! org-drill :after org-mode)
 (after! org
   (add-to-list 'org-agenda-files '"~/org/roam/daily/" '"~/org/roam")
+  (setq org-log-into-drawer t)
   (setq org-agenda-include-diary t)
   (setq org-ellipsis " [...] ")
   (setq org-src-window-setup 'current-window)
@@ -51,7 +56,7 @@
         '(("i" "inbox" entry (file+headline "inbox.org" "Unsorted")
            "* TODO %?\n\%i\n%a"
            :prepend t)
-          ("T" "today" entry (file+headline "~/org/tasks.org" "Tasks")
+          ("t" "today" entry (file+headline "~/org/tasks.org" "Tasks")
                 "* TODO %?\n  SCHEDULED: %t"
                 :prepend t)
           ("d" "deadline" entry (file+headline "todo.org" "Schedule")
@@ -59,7 +64,15 @@
            :prepend t)
           ("s" "schedule" entry (file+headline "inbox.org" "Schedule")
            "* TODO %?\nSCHEDULED: <%(org-read-date)>\n\n%i\n%a"
-           :prepend t)))
+           :prepend t)
+          ("w" "Work Todo" entry (file+headline "inbox.org" "Work")
+            "* TODO %? :work: \n  :PROPERTIES:\n  :CREATED: %U\n  :END:\n  :LOGBOOK:\n  - State \"TODO\"       from              %U\n  :END:\n\n")))
+
+  (setq org-agenda-custom-commands
+        '(("w" "Work Agenda"
+           ((tags-todo "work")
+            (agenda "" ((org-agenda-span 7))))
+           ((org-agenda-tag-filter-preset '("+work"))))))
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((plantuml . t))))
@@ -72,6 +85,10 @@
            :unnarrowed t)
           ("p" "project" plain
            ,(format "#+title: ${title}\n%%[%s/template/project.org]" org-roam-directory)
+           :target (file "project/%<%Y%m%d>-${slug}.org")
+           :unnarrowed t)
+          ("w" "work" plain
+           ,(format "#+title: ${title}\n%%[%s/template/note.org]" org-roam-directory)
            :target (file "project/%<%Y%m%d>-${slug}.org")
            :unnarrowed t)
           ("s" "secret" plain "#+title: ${title}\n\n"
