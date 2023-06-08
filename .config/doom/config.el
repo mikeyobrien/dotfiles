@@ -282,7 +282,7 @@
 
 (use-package! chatgpt-shell
   :custom
-  (setq chatgpt-shell-model-version "gpt-3.5-turbo")
+  (setq chatgpt-shell-model-version "gpt-4")
   (setq chatgpt-shell-history-path "~/syncthing/")
   (setq chatgpt-shell-openai-key
     (lambda ()
