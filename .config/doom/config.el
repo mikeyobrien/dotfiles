@@ -244,7 +244,6 @@
                          (magit-pull "--rebase" "--autostash")
                          (magit-revert "--autostash")))
 
-
 (defun c1-layout ()
   (interactive)
   (delete-other-windows)
@@ -261,8 +260,7 @@
 
 (defun yadm-status ()
   (interactive)
-  (magit-status "/yadm::")
-  (add-to-list 'tramp-remote-path "/run/current-system/sw/bin"))
+  (magit-status "/yadm::"))
 
 (setq mu4e-maildir "~/.mail"
       mu4e-attachment-dir "~/Downloads")
@@ -282,6 +280,13 @@
       smtpmail-stream-type 'starttls
       smtpmail-smtp-service 1025)
 
+(use-package! chatgpt-shell
+  :custom
+  (setq chatgpt-shell-model-version "gpt-3.5-turbo")
+  (setq chatgpt-shell-history-path "~/syncthing/")
+  (setq chatgpt-shell-openai-key
+    (lambda ()
+      (auth-source-pass-get 'secret "openai-key"))))
 
 (if (file-exists-p "private/private-config.el")
     (load! "private/private-config.el"))
