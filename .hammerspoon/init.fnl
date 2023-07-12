@@ -1,6 +1,6 @@
 (hs.ipc.cliInstall)
 (require-macros :lib.macros)
-(local secrets (require "secrets"))
+;;(local secrets (require "secrets"))
 
 (local lg-tv "LG TV SSCR2")
 (local lg-ultrafine "LG UltraFine")
@@ -77,64 +77,3 @@
                           (when (= console (hs.console.hswindow))
                             (hs.closeConsole))
                           (hs.openConsole))))
-
-
-
-(hs.hotkey.bind hyper "p"
-  (fn []
-    (local url "https://api.openai.com/v1/chat/completions")
-    (local api_key secrets.openai-key)
-    (local headers
-      {:authorization (.. "Bearer " api_key)
-       :content-type "application/json"
-       :accept "application/json"})
-
-    ; hs.eventtap.keyStroke({"cmd"}, "c")
-
-    (local message (hs.pasteboard.readString))
-    (local data
-      {:messages [{:role "user" :content message}]
-       :model "gpt-3.5-turbo"
-       :max_tokens 128
-       :temperature 0})
-
-    (hs.notify.new {:title "OpenAI query"
-                    :informativeText message} :send)
-
-    (hs.http.asyncPost url (hs.json.encode data) headers
-      (fn [status body headers]
-        (local response (hs.json.decode body))
-        (local answer (. response :choices 1 :message :content))
-        (hs.notify.new {:title "OpenAI response"
-                        :informativeText answer} :send)
-        (hs.pasteboard.writeObjects answer)
-        (hs.eventtap.keyStroke ["cmd"] "v")))))
-
-(hs.hotkey.bind hyper "q"
-  (fn []
-    (let [(message prompt) (hs.dialog.textPrompt "Ask question" "ChatGPT")]
-    (local url "https://api.openai.com/v1/chat/completions")
-    (local api_key secrets.openai-key)
-    (local headers
-      {:authorization (.. "Bearer " api_key)
-       :content-type "application/json"
-       :accept "application/json"})
-
-    ; hs.eventtap.keyStroke({"cmd"}, "c")
-    (local data
-      {:messages [{:role "user" :content prompt}]
-       :model "gpt-3.5-turbo"
-       :max_tokens 128
-       :temperature 0})
-
-    (hs.notify.new {:title "OpenAI query"
-                    :informativeText message} :send)
-
-    (hs.http.asyncPost url (hs.json.encode data) headers
-      (fn [status body headers]
-        (local response (hs.json.decode body))
-        (local answer (. response :choices 1 :message :content))
-        (hs.notify.new {:title "OpenAI response"
-                        :informativeText answer} :send)
-        (hs.pasteboard.writeObjects answer)
-        (hs.eventtap.keyStroke ["cmd"] "v"))))))
