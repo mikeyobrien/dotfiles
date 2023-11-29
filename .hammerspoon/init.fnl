@@ -2,28 +2,34 @@
 (require-macros :lib.macros)
 ;;(local secrets (require "secrets"))
 
+(hs.console.darkMode true)
+(hs.grid.setGrid :10x10)
+(print hs.screen.allScreens)
+
 (local lg-tv "LG TV SSCR2")
 (local lg-ultrafine "LG UltraFine")
 (local mini-screen :HS156KC)
 
 (local bottom-right (hs.geometry.rect 0.4 0.3 0.6 0.7))
 (local bottom-left (hs.geometry.rect 0 0.3 0.4 0.7))
-(local lg-layout [[:iTerm2 nil mini-screen bottom-left nil nil]
-                  [:Emacs nil lg-tv bottom-right nil nil]])
-(local uf-layout [[:iTerm2 nil lg-ultrafine hs.layout.left30 nil nil]
-                  [:Emacs nil lg-tv hs.layout.right70 nil nil]])
+(local top (hs.geometry.rect 0 0 1 0.3))
+(local lg-layout [[:Arc nil mini-screen bottom-left nil nil]
+                  [:Code nil lg-tv bottom-right nil nil]
+                  [:iTerm2 nil lg-tv top nil nil]])
 
-(local default-layout [[:Safari nil (hs.screen.primaryScreen) hs.layout.left50 nil nil]
-                       [:Emacs nil (hs.screen.primaryScreen) hs.layout.right50 nil nil]])
+(local default-layout [[:Safari nil (hs.screen.primaryScreen) hs.layout.maximized nil nil]
+                       [:Emacs nil (hs.screen.primaryScreen) hs.layout.maximized nil nil]
+                       [:iTerm2 nil (hs.screen.primaryScreen) hs.layout.maximized nil nil]
+                       [:Firefox nil (hs.screen.primaryScreen) hs.layout.maximized nil nil]
+                       [:Code nil (hs.screen.primaryScreen) hs.layout.maximized nil nil]
+                       [:Arc nil (hs.screen.primaryScreen) hs.layout.maximized nil nil]])
 
-(hs.grid.setGrid :5x5)
 (local expose (hs.expose.new nil {:showThumbnails false}))
 
 (fn get-layout [screen]
   (let [screen-name (: screen :name)]
     (match screen-name
       lg-tv lg-layout
-      lg-ultrafile uf-layout
       _ default-layout)))
 
 (fn fuzzy [choices func]
@@ -77,3 +83,22 @@
                           (when (= console (hs.console.hswindow))
                             (hs.closeConsole))
                           (hs.openConsole))))
+
+(fn move-windows-to-space-with-size [windows space size]
+  (each [i v (ipairs windows)]
+    (print (hs.spaces.moveWindowToSpace v space true))
+    (hs.grid.set v size (hs.screen.primaryScreen))))
+
+(fn organize-windows []
+  (let [iterm-windows (: (hs.window.filter.new "iTerm2") :getWindows)
+        arc-windows (: (hs.window.filter.new "Arc") :getWindows)
+        vscode-windows (: (hs.window.filter.new "Code") :getWindows)
+        primaryScreen (hs.screen.primaryScreen)
+        spaces (hs.spaces.spacesForScreen primaryScreen)]
+    ;; TODO: add offsets.
+    (move-windows-to-space-with-size iterm-windows (. spaces 2) (hs.geometry.rect 0 0 5 1))
+    (move-windows-to-space-with-size arc-windows (. spaces 2) (hs.geometry.rect 0 1 5 4))
+    (move-windows-to-space-with-size vscode-windows (. spaces 2) (hs.geometry.rect 0 1 5 4))))
+
+
+(hs.hotkey.bind ["cmd" "shift" "alt"] "A" organize-windows)
