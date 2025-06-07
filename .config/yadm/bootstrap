@@ -39,8 +39,59 @@ esac
 
 # Set fish as default shell if not already
 if [[ "$SHELL" != *"fish"* ]]; then
-    echo "Setting fish as default shell..."
-    chsh -s $(which fish)
+    # Check for Nix-installed fish first
+    if [[ -x "$HOME/.nix-profile/bin/fish" ]]; then
+        FISH_PATH="$HOME/.nix-profile/bin/fish"
+    else
+        FISH_PATH=$(which fish 2>/dev/null || true)
+    fi
+    
+    if [[ -n "$FISH_PATH" ]]; then
+        # Check if fish is in /etc/shells
+        if ! grep -q "^$FISH_PATH$" /etc/shells 2>/dev/null; then
+            echo "Adding $FISH_PATH to /etc/shells..."
+            if echo "$FISH_PATH" | sudo tee -a /etc/shells >/dev/null; then
+                echo "Successfully added fish to /etc/shells"
+                echo "Setting fish as default shell..."
+                if chsh -s "$FISH_PATH"; then
+                    echo "Successfully set fish as default shell"
+                else
+                    echo "Failed to set fish as default shell"
+                fi
+            else
+                echo "Failed to add fish to /etc/shells (sudo access required)"
+                echo "To manually set fish as default shell, run:"
+                echo "  echo '$FISH_PATH' | sudo tee -a /etc/shells"
+                echo "  chsh -s $FISH_PATH"
+            fi
+        else
+            echo "Setting fish as default shell..."
+            if chsh -s "$FISH_PATH"; then
+                echo "Successfully set fish as default shell"
+            else
+                echo "Failed to set fish as default shell"
+            fi
+        fi
+    else
+        echo "Warning: fish not found in PATH or ~/.nix-profile/bin"
+    fi
+fi
+
+# Manage termux.md reference in CLAUDE.md based on platform
+if [[ -f ~/.claude/CLAUDE.md ]]; then
+    if [[ "$PLATFORM" == "termux" ]]; then
+        # Add termux.md reference if on Termux and not already present
+        if ! grep -q "@~/.claude/docs/termux.md" ~/.claude/CLAUDE.md 2>/dev/null; then
+            echo "Adding Termux documentation reference to CLAUDE.md..."
+            echo "- @~/.claude/docs/termux.md" >> ~/.claude/CLAUDE.md
+        fi
+    else
+        # Remove termux.md reference if not on Termux
+        if grep -q "@~/.claude/docs/termux.md" ~/.claude/CLAUDE.md 2>/dev/null; then
+            echo "Removing Termux documentation reference from CLAUDE.md..."
+            sed -i '/@~\/.claude\/docs\/termux.md/d' ~/.claude/CLAUDE.md
+        fi
+    fi
 fi
 
 echo "Bootstrap complete!"

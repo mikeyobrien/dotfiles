@@ -126,5 +126,4 @@ Whenever you build out a new project and specifically start a new Claude.md - yo
 - @~/.claude/docs/python.md
 - @~/.claude/docs/source-control.md
 - @~/.claude/docs/using-uv.md
-- @~/.claude/docs/termux.md
 
