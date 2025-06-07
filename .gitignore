@@ -1,0 +1,31 @@
+# Sensitive files
+.claude/.credentials.json
+.claude/statsig/
+.claude.json
+
+# Session-specific claude data
+.claude/projects/*/
+.claude/todos/
+
+# History files
+.*_history
+.bash_history
+
+# Temporary files
+*.tmp
+*.swp
+*~
+
+# SSH private keys (keep public keys)
+.ssh/id_*
+!.ssh/id_*.pub
+.ssh/github_*
+.ssh/known_hosts*
+
+# Local settings
+*.local
+*.local.json
+
+# Auth files
+.termux_authinfo
+.npmrc
