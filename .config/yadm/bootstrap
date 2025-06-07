@@ -1,0 +1,46 @@
+#!/bin/bash
+# Yadm bootstrap script - runs after cloning
+
+set -e
+
+echo "Setting up dotfiles for $(hostname)..."
+
+# Detect OS/Platform
+if [[ "$OSTYPE" == "linux-android" ]] || [[ -d "/data/data/com.termux" ]]; then
+    PLATFORM="termux"
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    PLATFORM="macos"
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    PLATFORM="linux"
+fi
+
+echo "Detected platform: $PLATFORM"
+
+# Install platform-specific dependencies
+case "$PLATFORM" in
+    termux)
+        echo "Installing Termux dependencies..."
+        pkg update
+        pkg install -y fish tmux git atuin golang uv
+        ;;
+    macos)
+        echo "Installing macOS dependencies..."
+        if ! command -v brew &> /dev/null; then
+            echo "Installing Homebrew..."
+            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        fi
+        brew install fish tmux atuin go uv
+        ;;
+    linux)
+        echo "Installing Linux dependencies..."
+        # Add your package manager commands here
+        ;;
+esac
+
+# Set fish as default shell if not already
+if [[ "$SHELL" != *"fish"* ]]; then
+    echo "Setting fish as default shell..."
+    chsh -s $(which fish)
+fi
+
+echo "Bootstrap complete!"
