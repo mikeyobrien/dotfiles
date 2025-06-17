@@ -6,7 +6,7 @@
 
     "modules-left": ["hyprland/workspaces", "hyprland/window"],
     "modules-center": ["clock"],
-    "modules-right": ["pulseaudio", "network", "cpu", "memory", "disk", "battery", "tray"],
+    "modules-right": ["pulseaudio", "network", "cpu", "memory", "disk", "custom/battery", "tray"],
 
     "hyprland/workspaces": {
         "disable-scroll": true,
@@ -95,19 +95,12 @@
         "on-click": "pavucontrol"
     },
 
-    "battery": {
-        "states": {
-            "warning": 30,
-            "critical": 15
-        },
-        "format": "{icon}",
-        "format-full": "󰁹",
-        "format-charging": "󰂄",
-        "format-plugged": "󰚥",
-        "format-alt": "{icon} {time}",
-        "format-icons": ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
-        "tooltip": true,
-        "tooltip-format": "Battery: {capacity}%\n{timeTo}"
+    "custom/battery": {
+        "exec": "~/.config/waybar/scripts/battery-rate.sh",
+        "return-type": "json",
+        "interval": 5,
+        "format": "{}",
+        "tooltip": true
     },
 
     "tray": {

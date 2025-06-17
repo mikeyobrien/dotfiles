@@ -68,6 +68,7 @@ tooltip label {
 #network,
 #pulseaudio,
 #custom-media,
+#custom-battery,
 #tray,
 #mode,
 #idle_inhibitor,
@@ -157,6 +158,33 @@ tooltip label {
     animation-direction: alternate;
 }
 
+#custom-battery {
+    background: @surface0;
+    color: @teal;
+    margin: 5px 2px;
+    padding: 2px 12px;
+    border-radius: 10px;
+    border: 2px solid @teal;
+    transition: all 0.3s ease;
+}
+
+#custom-battery.charging, #custom-battery.plugged {
+    background: @surface0;
+    color: @green;
+    border: 2px solid @green;
+}
+
+#custom-battery.critical:not(.charging) {
+    background-color: @red;
+    color: @base;
+    border: 2px solid @red;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
 #tray {
     background: @surface0;
     border: 2px solid @surface1;
@@ -186,7 +214,8 @@ tooltip label {
 #disk:hover,
 #network:hover,
 #pulseaudio:hover,
-#battery:hover {
+#battery:hover,
+#custom-battery:hover {
     background: @surface1;
     box-shadow: 0 2px 8px alpha(@base, 0.3);
 }
