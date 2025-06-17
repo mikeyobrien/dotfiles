@@ -1,0 +1,192 @@
+@import "macchiato.css";
+
+* {
+    font-family: "Noto Sans", "Symbols Nerd Font", "Font Awesome 6 Free", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    min-height: 0;
+}
+
+window#waybar {
+    background: transparent;
+    color: @text;
+}
+
+tooltip {
+    background: @base;
+    border: 1px solid @surface1;
+    border-radius: 8px;
+}
+
+tooltip label {
+    color: @text;
+}
+
+#workspaces {
+    background: @surface0;
+    margin: 5px;
+    padding: 0px 5px;
+    border-radius: 8px;
+}
+
+#workspaces button {
+    padding: 0 5px;
+    color: @text;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+#workspaces button.active {
+    background: @blue;
+    color: @base;
+}
+
+#workspaces button.urgent {
+    background: @red;
+    color: @base;
+}
+
+#workspaces button:hover {
+    background: @surface1;
+    color: @text;
+}
+
+#window {
+    background: @surface0;
+    margin: 5px;
+    padding: 0px 10px;
+    border-radius: 8px;
+}
+
+#clock,
+#battery,
+#cpu,
+#memory,
+#disk,
+#temperature,
+#backlight,
+#network,
+#pulseaudio,
+#custom-media,
+#tray,
+#mode,
+#idle_inhibitor,
+#scratchpad,
+#mpd {
+    background: @surface0;
+    margin: 5px 2px;
+    padding: 2px 12px;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+#clock {
+    background: @blue;
+    color: @base;
+    font-weight: bold;
+    margin-right: 5px;
+    border: 2px solid @sapphire;
+}
+
+#cpu {
+    background: @surface0;
+    color: @sky;
+    border: 2px solid @sky;
+}
+
+#memory {
+    background: @surface0;
+    color: @mauve;
+    border: 2px solid @mauve;
+}
+
+#disk {
+    background: @surface0;
+    color: @green;
+    border: 2px solid @green;
+}
+
+#network {
+    background: @surface0;
+    color: @peach;
+    border: 2px solid @peach;
+}
+
+#network.disconnected {
+    background: @red;
+}
+
+#pulseaudio {
+    background: @surface0;
+    color: @yellow;
+    border: 2px solid @yellow;
+}
+
+#pulseaudio.muted {
+    background: @surface1;
+    color: @overlay0;
+}
+
+#battery {
+    background: @surface0;
+    color: @teal;
+    border: 2px solid @teal;
+}
+
+#battery.charging, #battery.plugged {
+    background: @surface0;
+    color: @green;
+    border: 2px solid @green;
+}
+
+@keyframes blink {
+    to {
+        background-color: @red;
+        color: @base;
+    }
+}
+
+#battery.critical:not(.charging) {
+    background-color: @red;
+    color: @base;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+#tray {
+    background: @surface0;
+    border: 2px solid @surface1;
+    margin-right: 5px;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+    background-color: @red;
+}
+
+.modules-left > widget:first-child > #workspaces {
+    margin-left: 5px;
+}
+
+.modules-right > widget:last-child > * {
+    margin-right: 5px;
+}
+
+/* Hover effects for modules */
+#cpu:hover,
+#memory:hover,
+#disk:hover,
+#network:hover,
+#pulseaudio:hover,
+#battery:hover {
+    background: @surface1;
+    box-shadow: 0 2px 8px alpha(@base, 0.3);
+}

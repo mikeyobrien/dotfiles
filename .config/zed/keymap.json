@@ -1,0 +1,30 @@
+// Zed keymap
+//
+// For information on binding keys, see the Zed
+// documentation: https://zed.dev/docs/key-bindings
+//
+// To see the default key bindings run `zed: open default keymap`
+// from the command palette.
+[
+  {
+    "context": "Workspace",
+    "bindings": {
+      // "shift shift": "file_finder::Toggle"
+    }
+  },
+  {
+    "context": "Editor && vim_mode == normal",
+    "bindings": {
+      "space o t": "terminal_panel::ToggleFocus",
+      "space p f": "file_finder::Toggle",
+      "space space": "command_palette::Toggle",
+      "space h s": "zed::OpenSettings",
+      "space h k": "zed::OpenKeymap",
+      "space e h": "workspace::ToggleLeftDock",
+      "space e j": "workspace::ToggleBottomDock",
+      "space e l": "workspace::ToggleRightDock",
+      "j": ["workspace::SendKeystrokes", "g j"],
+      "k": ["workspace::SendKeystrokes", "g k"]
+    }
+  }
+]

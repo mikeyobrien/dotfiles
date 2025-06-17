@@ -1,0 +1,47 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "ssh_connections": [
+    {
+      "host": "10.10.10.234",
+      "username": "mobrienv",
+      "projects": [
+        {
+          "paths": ["/Users/mobrienv/Code/why"]
+        }
+      ]
+    }
+  ],
+  "features": {
+    "edit_prediction_provider": "zed"
+  },
+  "agent": {
+    "model_parameters": [],
+    "always_allow_tool_actions": true,
+    "version": "2"
+  },
+  "base_keymap": "VSCode",
+  "vim_mode": true,
+  "ui_font_size": 14,
+  "buffer_font_size": 14,
+  "theme": {
+    "mode": "system",
+    "light": "Catppuccin Macchiato",
+    "dark": "One Dark"
+  },
+  "soft_wrap": "editor_width",
+  "preferred_line_length": 80,
+  "wrap_guides": [80],
+  "languages": {
+    "Markdown": {
+      "enable_language_server": true
+    }
+  },
+  "autosave": "on_focus_change"
+}

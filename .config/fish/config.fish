@@ -1,5 +1,13 @@
 if status is-interactive
     # Commands to run in interactive sessions can go here
+    alias ze="zeditor"
+    
+    # yadm aliases
+    alias ys="yadm status"
+    alias ya="yadm add"
+    
+    # Check for system updates
+    check_updates
 end
 
 # Fix locale for nix bash
@@ -9,6 +17,7 @@ alias gs='git status'
 alias gdiff='git diff'
 alias tl='tmux list-sessions'
 alias c='claude --dangerously-skip-permissions'
+alias claude="/home/mobrienv/.claude/local/claude"
 
 # Manjaro proot aliases
 alias manjaro="~/manjaro-login"
@@ -38,3 +47,5 @@ end
 # Use a custom cache directory and enable symlinks for better performance
 set -gx UV_CACHE_DIR "$HOME/uv-cache"
 set -gx UV_LINK_MODE symlink
+
+fish_add_path $HOME/.local/bin
